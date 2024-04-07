@@ -4,7 +4,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import WelcomeScreen from './Screens/WelcomeScreen';
 import LoginScreen from './Screens/LoginScreen';
 import SignupScreen from './Screens/SignupScreen';
-import WelcomeBackScreen from './Screens/WelcomeBackScreen'; // Import the WelcomeBackScreen
+import HomeScreen from './Screens/HomeScreen';
+import WishlistScreen from './Screens/WishlistScreen'; 
+import UserProfileScreen from './UserProfileScreen'; // Import your UserProfileScreen component
+
 
 const Stack = createStackNavigator();
 
@@ -15,7 +18,9 @@ const App = () => {
         <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
-        <Stack.Screen name="WelcomeBack" component={WelcomeBackScreen} /> {/* Add WelcomeBackScreen */}
+        <Stack.Screen name="Home" component={HomeScreen} /> 
+        <Stack.Screen name="Wishlist" component={WishlistScreen} /> 
+        <Stack.Screen name="UserProfile" component={UserProfileScreen} options={{ title: 'User Profile' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,7 +1,12 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { initializeAuth, getAuthManager } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
-// Your Firebase configuration
+//Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB5yoTaoA5L-ImLm0-U0kU4WWh6iIaffC0",
   authDomain: "medplantid.firebaseapp.com",
@@ -13,28 +18,28 @@ const firebaseConfig = {
 };
 
 
-// Function to handle user logout
-const logoutUser = async () => {
-  try {
-    await signOut(auth);
-    console.log('User logged out successfully');
-  } catch (error) {
-    console.error('Logout error:', error);
-    throw error;
-  }
-};
-
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const Medplantid = initializeApp(firebaseConfig);
 
-// Get the Auth object
-const auth = getAuth(app);
+const isReactNative = Platform.OS === 'ios' || Platform.OS === 'android';
+
+
+// Initialize Firebase Auth with AsyncStorage persistence
+const auth = getAuth(Medplantid);
+if (isReactNative) {
+  auth.settings.persistence = ReactNativeAsyncStorage;
+}
+console.log('Firebase initialized with auth object:', auth); // Log the auth object to verify its initialization
 
 // Function to handle user signup
-const signUpWithEmailAndPassword = async (email, password) => {
+const signUpWithEmailAndPassword = async (email, password, username) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Update user profile with the provided username
+    await updateProfile(userCredential.user, {
+      displayName: username
+    });
     console.log('User signed up:', userCredential.user);
     return userCredential.user;
   } catch (error) {
@@ -56,4 +61,7 @@ const loginWithEmailAndPassword = async (email, password) => {
 };
 
 // Export the authentication functions and auth object
+const firestore = firebase.firestore();
+
+export { firestore };
 export { auth, signUpWithEmailAndPassword, loginWithEmailAndPassword };
