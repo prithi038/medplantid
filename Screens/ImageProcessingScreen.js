@@ -1,47 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-react-native';
 
 const ImageProcessingScreen = () => {
   const [image, setImage] = useState(null);
   const [prediction, setPrediction] = useState(null);
+  const [model, setModel] = useState(null);
+
+  useEffect(() => {
+    loadModel();
+  }, []);
+
+  const loadModel = async () => {
+    try {
+      const modelFile = 'D:\\medplantid\\model\\dn_model.tflite';
+      const loadedModel = await tf.loadGraphModel(`file://${modelFile}`);
+      console.writeln("1");
+      setModel(loadedModel);
+      console.writeln("2");
+    } catch (error) {
+      console.error('Error loading model:', error);
+    }
+  };
 
   const selectImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       setImage(result.uri);
-      sendImageToServer(result.uri);
+      predictImage(result.uri);
     }
   };
 
-  const sendImageToServer = async (uri) => {
-    const formData = new FormData();
-    formData.append('image', {
-      uri,
-      name: 'photo.jpg',
-      type: 'image/jpeg',
-    });
-
+  const predictImage = async (uri) => {
     try {
-      const response = await fetch('http://your-flask-server-ip:5000/predict', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const imageTensor = await loadImageTensor(uri);
 
-      const data = await response.json();
-      setPrediction(data.prediction);
+      // Make predictions using the loaded model
+      const prediction = await model.predict(imageTensor);
+      setPrediction(prediction);
     } catch (error) {
-      console.error('Error sending image to server:', error);
+      console.error('Error predicting image:', error);
+      setPrediction(null);
     }
+  };
+
+  const loadImageTensor = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const image = await tf.browser.fromPixels(blob);
+    const resizedImage = tf.image.resizeBilinear(image, [inputSize, inputSize]); 
+    const imageTensor = resizedImage.expandDims(0);
+    return imageTensor;
   };
 
   return (

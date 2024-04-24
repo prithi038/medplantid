@@ -1,10 +1,11 @@
 import { initializeApp } from 'firebase/app';
-import { initializeAuth, getAuthManager } from 'firebase/auth';
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
+
+
 
 //Firebase configuration
 const firebaseConfig = {
@@ -21,17 +22,19 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const Medplantid = initializeApp(firebaseConfig);
-
+const database = getDatabase(Medplantid);
 const isReactNative = Platform.OS === 'ios' || Platform.OS === 'android';
 
 
 // Initialize Firebase Auth with AsyncStorage persistence
-const auth = getAuth(Medplantid);
+let auth;
 if (isReactNative) {
-  auth.settings.persistence = ReactNativeAsyncStorage;
+  auth = initializeAuth(Medplantid, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+  });
+} else {
+  auth = getAuth(Medplantid);
 }
-console.log('Firebase initialized with auth object:', auth); // Log the auth object to verify its initialization
-
 // Function to handle user signup
 const signUpWithEmailAndPassword = async (email, password, username) => {
   try {
@@ -61,7 +64,4 @@ const loginWithEmailAndPassword = async (email, password) => {
 };
 
 // Export the authentication functions and auth object
-const firestore = firebase.firestore();
-
-export { firestore };
-export { auth, signUpWithEmailAndPassword, loginWithEmailAndPassword };
+export { auth, database, firebaseConfig, signUpWithEmailAndPassword, loginWithEmailAndPassword };

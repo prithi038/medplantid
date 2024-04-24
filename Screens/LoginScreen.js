@@ -13,7 +13,7 @@ const LoginScreen = () => {
       // Verify login credentials with Firebase
       const user = await loginWithEmailAndPassword(email, password);
       // Navigate to the Welcome Back screen after successful login
-      navigation.navigate('WelcomeBack');
+      navigation.navigate('Home');
     } catch (error) {
       console.error('Login error:', error);
       // Handle login errors

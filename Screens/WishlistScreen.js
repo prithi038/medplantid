@@ -1,42 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { database, auth } from '../firebaseConfig';
+import { ref, set, onValue} from 'firebase/database';
 
 const WishlistScreen = () => {
   const [wishlist, setWishlist] = useState([]);
-
-  // Dummy data for demonstration, replace with actual data from Firebase or other source
-  const dummyWishlistData = [
-    { id: '1', name: 'Plantago', image: require('../assets/Plantago.png') },
-    { id: '2', name: 'Fructus lycii', image: require('../assets/Fructus lycii.png') },
-    { id: '3', name: 'Mangifera', image: require('../assets/Mangifera.png') },
-  ];
-
+  const navigation = useNavigation();
+  const userId = auth.currentUser ? auth.currentUser.uid : null;
+  
   useEffect(() => {
-    // Set the dummy data as the wishlist items
-    setWishlist(dummyWishlistData);
-  }, []);
+    const fetchWishlist = async () => {
+    try {
+      if (userId) {
+          const wishlistRef = ref(database, `wishlist/${userId}`);
+          onValue(wishlistRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+              const wishlistItems = Object.values(data);
+              setWishlist(wishlistItems);
+            } else {
+              setWishlist([]);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching wishlist:', error);
+      }
+    };
+
+    fetchWishlist();
+
+    return () => {
+      if (userId) {
+        const wishlistRef = ref(database, `wishlist/${userId}`);
+        onValue(wishlistRef, null);
+      }
+    };
+  }, [userId]);
+
+  const handleRemoveItem = async (itemId) => {
+    try {
+      if (userId) {
+        const index = wishlist.findIndex((item) => item.id === itemId);
+        if (index !== -1) {
+          const updatedWishlist = [...wishlist];
+          updatedWishlist.splice(index, 1); // Remove the item from the wishlist array
+          setWishlist(updatedWishlist);
+          await set(ref(database, `wishlist/${userId}`), updatedWishlist); // Update the wishlist in the database
+        }
+      }
+    } catch (error) {
+      console.error('Error removing item from wishlist:', error);
+    }
+  };
 
   const renderProductItem = ({ item }) => (
-    <TouchableOpacity style={styles.productItem}>
-      <Image source={item.image} style={styles.productImage} />
+    <TouchableOpacity style={styles.productItem} onPress={() => navigation.navigate('ProductDetails', { product: item })}>
+      <Image source={{ uri: item.uri }} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
+      <TouchableOpacity onPress={() => handleRemoveItem(item.id)}>
+        <Text style={styles.removeButton}>Remove</Text>
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Wishlist</Text>
-      {wishlist.length === 0 ? (
-        <Text style={styles.emptyText}>Your wishlist is empty</Text>
-      ) : (
+      {wishlist.length > 0 ? (
         <FlatList
-          data={wishlist}
-          renderItem={renderProductItem}
-          keyExtractor={(item) => item.id}
-        />
-      )}
-    </View>
+        data={wishlist}
+        renderItem={renderProductItem} 
+        keyExtractor={(item,index) => item.id} 
+      />
+    ) : (
+      <Text style={styles.emptyText}>Your wishlist is empty.</Text>
+    )}
+  </View>
   );
 };
 
@@ -60,6 +101,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    paddingBottom: 10,
   },
   productImage: {
     width: 80,
@@ -67,8 +111,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
+  productInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   productName: {
     fontSize: 16,
+    flex: 1,
+  },
+  removeButtonContainer: {
+    padding: 5, 
+  },
+  removeButton: {
+    color: 'red',
+    marginLeft: 10,
   },
 });
 

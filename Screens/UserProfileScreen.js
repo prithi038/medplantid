@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { auth } from '../firebaseConfig'; // Import the auth object from firebaseConfig
 import { useNavigation } from '@react-navigation/native';
+import { auth } from '../firebaseConfig'; // Import the auth object from firebaseConfig
 
 const UserProfileScreen = () => {
   const navigation = useNavigation();
 
-  // Dummy user data
+  //user data
   const user = {
-    name: 'John Doe',
+    name: 'Prithika',
     profileImage: require('../assets/profile_image.jpg'), // Example image path
   };
 
@@ -24,52 +24,46 @@ const UserProfileScreen = () => {
       });
   };
 
+  // Function to navigate to AddressScreen
+  const goToAddressScreen = () => {
+    navigation.navigate('Address');
+  };
+
+  // Function to navigate to NotificationScreen
+  const goToNotificationScreen = () => {
+    navigation.navigate('Notification');
+  };
+
+  // Function to navigate to SecurityScreen
+  const goToSecurityScreen = () => {
+    navigation.navigate('Security');
+  };
+
+  // Function to navigate to SettingsScreen
+  const goToSettingsScreen = () => {
+    navigation.navigate('Settings');
+  };
+
   return (
     <View style={styles.container}>
-      {/* User Profile */}
       <View style={styles.profileContainer}>
         <Image source={user.profileImage} style={styles.profileImage} />
         <Text style={styles.userName}>{user.name}</Text>
       </View>
 
-      {/* Options */}
       <View style={styles.optionContainer}>
-        {/* Option: Edit Profile */}
-        <TouchableOpacity style={styles.optionItem}>
-          <Text>Edit Profile</Text>
-        </TouchableOpacity>
-
-        {/* Option: Address */}
-        <TouchableOpacity style={styles.optionItem}>
+        <TouchableOpacity style={styles.optionItem} onPress={goToAddressScreen}>
           <Text>Address</Text>
         </TouchableOpacity>
-
-        {/* Option: Notification */}
-        <TouchableOpacity style={styles.optionItem}>
+        <TouchableOpacity style={styles.optionItem} onPress={goToNotificationScreen}>
           <Text>Notification</Text>
         </TouchableOpacity>
-
-        {/* Option: Payments */}
-        <TouchableOpacity style={styles.optionItem}>
-          <Text>Payments</Text>
-        </TouchableOpacity>
-
-        {/* Option: Security */}
-        <TouchableOpacity style={styles.optionItem}>
+        <TouchableOpacity style={styles.optionItem} onPress={goToSecurityScreen}>
           <Text>Security</Text>
         </TouchableOpacity>
-
-        {/* Option: Settings */}
-        <TouchableOpacity style={styles.optionItem}>
+        <TouchableOpacity style={styles.optionItem} onPress={goToSettingsScreen}>
           <Text>Settings</Text>
         </TouchableOpacity>
-
-        {/* Option: Orders */}
-        <TouchableOpacity style={styles.optionItem}>
-          <Text>Orders</Text>
-        </TouchableOpacity>
-
-        {/* Option: Logout */}
         <TouchableOpacity style={styles.optionItem} onPress={handleLogout}>
           <Text>Logout</Text>
         </TouchableOpacity>
