@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
 import { loginWithEmailAndPassword } from '../firebaseConfig';
-import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+import { useNavigation } from '@react-navigation/native'; 
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation(); // Initialize navigation
-
+  const navigation = useNavigation(); 
   const handleLogin = async () => {
     try {
-      // Verify login credentials with Firebase
       const user = await loginWithEmailAndPassword(email, password);
-      // Navigate to the Welcome Back screen after successful login
       navigation.navigate('Home');
     } catch (error) {
       console.error('Login error:', error);
-      // Handle login errors
     }
   };
 
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../assets/backgroundImage.jpg')} // Adjust the path to your background image
+        source={require('../assets/backgroundImage.jpg')} 
         style={styles.background}
       >
         <View style={styles.overlay}>
@@ -57,7 +53,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff', // White background for the remaining screen
+    backgroundColor: '#ffffff', 
   },
   background: {
     flex: 1,
@@ -66,7 +62,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay to darken the background image
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -74,7 +70,7 @@ const styles = StyleSheet.create({
     width: '80%',
     padding: 20,
     borderRadius: 10,
-    backgroundColor: '#ffffff', // White background for the form
+    backgroundColor: '#ffffff', 
     alignItems: 'center',
   },
   heading: {
@@ -94,14 +90,14 @@ const styles = StyleSheet.create({
   loginButton: {
     width: '100%',
     height: 40,
-    backgroundColor: '#007bff', // Blue color for the login button
+    backgroundColor: '#007bff', 
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
   },
   loginButtonText: {
-    color: '#ffffff', // White color for the login button text
+    color: '#ffffff', 
     fontWeight: 'bold',
   },
 });

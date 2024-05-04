@@ -6,8 +6,7 @@ const AddressScreen = () => {
   const [editMode, setEditMode] = useState(false);
 
   const handleSaveAddress = () => {
-    // Save the entered address to the state or send it to the server
-    // Here, we're just logging it for demonstration purposes
+   
     console.log('Address saved:', address);
     setEditMode(false);
   };

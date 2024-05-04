@@ -5,7 +5,7 @@ import WelcomeScreen from './Screens/WelcomeScreen';
 import LoginScreen from './Screens/LoginScreen';
 import SignupScreen from './Screens/SignupScreen';
 import WishlistScreen from './Screens/WishlistScreen'; 
-import UserProfileScreen from './Screens/UserProfileScreen'; // Import your UserProfileScreen component
+import UserProfileScreen from './Screens/UserProfileScreen'; 
 import HomepageScreen from './Screens/HomepageScreen';
 import ImageProcessingScreen from './Screens/ImageProcessingScreen';
 import ProductDetails from './Screens/ProductDetails';

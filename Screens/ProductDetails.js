@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useFocusEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Image } from 'react-native';
 import Modal from 'react-native-modal';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { database, auth } from '../firebaseConfig'; // Import Firebase services
+import { database, auth } from '../firebaseConfig'; 
 import { ref as dbRef, push, set } from 'firebase/database';
+
 
 const ProductDetails = () => {
     const navigation = useNavigation();
@@ -18,6 +19,7 @@ const ProductDetails = () => {
 
     const handleOrderNow = () => {
         setModalVisible(true);
+       // modalVisible(true);
     };
 
     const handlePlaceOrder = async () => {
@@ -43,7 +45,6 @@ const ProductDetails = () => {
             const ordersRef = dbRef(database, `orders/${userId}`);
             const newOrderRef = push(ordersRef);
             await set(newOrderRef, orderData);
-
             Alert.alert('Success', 'Order placed. Thank you!', [{ text: 'Home', onPress: () => navigation.navigate('Home') }]);
             setModalVisible(false);
         } 
@@ -53,7 +54,7 @@ const ProductDetails = () => {
         }
     };
     const OrderModal = ({ modalVisible, setModalVisible, quantity, setQuantity, paymentOption, setPaymentOption, address, setAddress, phoneNumber, setPhoneNumber, handlePlaceOrder }) => (
-        <Modal isVisible={modalVisible} onBackdropPress={() => {}}>
+        <Modal isVisible={modalVisible} >
             <View style={styles.modalContainer}>
                 <Text style={styles.modalTitle}>Order Details</Text>
                 <Text style={styles.inputLabel}>Quantity (kg):</Text>
@@ -89,15 +90,23 @@ const ProductDetails = () => {
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"/>
-                <TouchableOpacity
-                    style={styles.placeOrderButton}
-                    onPress={handlePlaceOrder}
-                    disabled={!address || !paymentOption || quantity < 1 || !phoneNumber}>
-                    <Text style={styles.buttonText}>Place Order</Text>
-                </TouchableOpacity>
+                <View style={styles.buttonGroup}>
+                    <TouchableOpacity
+                        style={styles.cancelButton}
+                        onPress={() => setModalVisible(false)}>
+                        <Text style={styles.buttonText}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.placeOrderButton}
+                        onPress={handlePlaceOrder}
+                        disabled={!address || !paymentOption || quantity < 1 || !phoneNumber}>
+                        <Text style={styles.buttonText}>Place Order</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </Modal>
     );
+    
 
     return (
         <View style={styles.container}>
@@ -220,6 +229,18 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 10,
         marginBottom: 15,
+    },
+    buttonGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    cancelButton: {
+        backgroundColor: '#FF6347',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        flex: 1,
+        marginRight: 5,
     },
     placeOrderButton: {
         backgroundColor: '#32CD32',

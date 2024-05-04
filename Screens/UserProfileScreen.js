@@ -1,22 +1,21 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { auth } from '../firebaseConfig'; // Import the auth object from firebaseConfig
+import { auth } from '../firebaseConfig'; 
 
 const UserProfileScreen = () => {
   const navigation = useNavigation();
 
-  //user data
+  
   const user = {
     name: 'Prithika',
-    profileImage: require('../assets/profile_image.jpg'), // Example image path
+    profileImage: require('../assets/profile_image.jpg'), 
   };
 
-  // Function to handle logout
   const handleLogout = () => {
     auth.signOut()
       .then(() => {
-        // Navigate to the Welcome screen after successful logout
+        
         navigation.navigate('Welcome');
       })
       .catch((error) => {
@@ -24,22 +23,22 @@ const UserProfileScreen = () => {
       });
   };
 
-  // Function to navigate to AddressScreen
+
   const goToAddressScreen = () => {
     navigation.navigate('Address');
   };
 
-  // Function to navigate to NotificationScreen
+  
   const goToNotificationScreen = () => {
     navigation.navigate('Notification');
   };
 
-  // Function to navigate to SecurityScreen
+  
   const goToSecurityScreen = () => {
     navigation.navigate('Security');
   };
 
-  // Function to navigate to SettingsScreen
+  
   const goToSettingsScreen = () => {
     navigation.navigate('Settings');
   };

@@ -28,9 +28,7 @@ const WishlistScreen = () => {
         console.error('Error fetching wishlist:', error);
       }
     };
-
     fetchWishlist();
-
     return () => {
       if (userId) {
         const wishlistRef = ref(database, `wishlist/${userId}`);
@@ -45,9 +43,9 @@ const WishlistScreen = () => {
         const index = wishlist.findIndex((item) => item.id === itemId);
         if (index !== -1) {
           const updatedWishlist = [...wishlist];
-          updatedWishlist.splice(index, 1); // Remove the item from the wishlist array
+          updatedWishlist.splice(index, 1); 
           setWishlist(updatedWishlist);
-          await set(ref(database, `wishlist/${userId}`), updatedWishlist); // Update the wishlist in the database
+          await set(ref(database, `wishlist/${userId}`), updatedWishlist);
         }
       }
     } catch (error) {

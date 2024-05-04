@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { auth, database } from '../firebaseConfig'; // Import only the necessary objects from firebaseConfig
+import { auth, database } from '../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
@@ -14,14 +14,10 @@ const HomepageScreen = () => {
   const [favoriteItems, setFavoriteItems] = useState([]);
   const userId = auth.currentUser ? auth.currentUser.uid : null;
   
-
   useEffect(() => {
-    // Get the current user from Firebase
     const currentUser = auth.currentUser;
     if (currentUser) {
-      // Fetch the updated user data after reload
       currentUser.reload().then(() => {
-        // Update the display name
         const displayName = currentUser.displayName || 'Welcome !!';
         setUserName(displayName);
       });
@@ -40,7 +36,6 @@ const HomepageScreen = () => {
           setFavoriteItems([]);
         }
       });
-  
       return () => unsubscribe();
     }
   }, [userId]);
@@ -83,20 +78,15 @@ const HomepageScreen = () => {
   const handleCartClick = () => {
     navigation.navigate('Cart');
 };
-
 const handleWishlistNavigation = () => {
-  navigation.navigate('Wishlist', {favoriteItems}); // Navigate to the WishlistScreen
+  navigation.navigate('Wishlist', {favoriteItems}); 
 };
-
 const handleImageProcessing = () => {
   navigation.navigate('ImageProcessing');
 };
-
   const handleSearch = () => {
-    // Implement search functionality
     console.log('Searching for:', searchText);
   };
-
   const renderProductItems = () => {
     const itemsPerRow = 2;
     const rows = Math.ceil(productData.length / itemsPerRow);
@@ -114,11 +104,10 @@ const handleImageProcessing = () => {
             >
               <View style={styles.productImageContainer}>
                 <Image source={{ uri: productData[index].uri }} style={styles.productImage} />
-                {/* Add to Favorites Icon */}
                 <TouchableOpacity
-                  style={[styles.favoriteIcon, { backgroundColor: favoriteItems.includes(productData[index]) ? 'red' : '#fff' }]}
+                  style={[styles.favoriteIcon, { backgroundColor: favoriteItems.includes(productData[index]) ? '#ff0000' : '#fff' }]}
                   onPress={() => handleFavoriteToggle(productData[index])}
-                >
+>
                 <Image source={require('../assets/favourite_icon.png')} style={styles.icon} />
                 </TouchableOpacity>
               </View>
@@ -135,24 +124,20 @@ const handleImageProcessing = () => {
     }
     return items;
   };
-
   return (
     <View style={styles.container}>
-      {/* Top Header */}
+     
       <View style={styles.header}>
-        {/* User Name */}
+      
         <Text style={styles.userName}>{userName}</Text>
-        {/* Navigation Icon */}
+       
         <TouchableOpacity style={styles.navigationIcon} onPress={toggleMenu}>
           <Image source={require('../assets/menu_icon.png')} style={styles.icon} />
         </TouchableOpacity>
       </View>
-
-      {/* Search Bar */}
       <View style={styles.searchBar}>
-        {/* Search Icon */}
+        
   <FontAwesome5 name="search" size={20} color="#666" style={styles.searchIcon} />
-  {/* Search Input */}
         <TextInput
           placeholder="Search Medicinal Plants"
           style={styles.searchInput}
@@ -162,8 +147,6 @@ const handleImageProcessing = () => {
           onSubmitEditing={handleSearch}
         />
       </View>
-
-      {/* Plant Image and Text Section */}
       <View style={styles.plantSection}>
         <View style={styles.textSection}>
           <Text style={styles.sectionTitle}>Enhance Your Health with Medicinal Plants</Text>
@@ -173,27 +156,26 @@ const handleImageProcessing = () => {
         </View>
       </View>
 
-      {/* Medicinal Plant Products */}
       <ScrollView style={styles.productList}>{renderProductItems()}</ScrollView>
-      {/* Bottom Navigation */}
+    
       <View style={styles.bottomNav}>
-        {/* Image Processing Panel */}
+     
         <TouchableOpacity style={styles.navIcon} onPress={handleImageProcessing}>
           <Image source={require('../assets/image_processing_icon.png')} style={styles.icon} />
         </TouchableOpacity>
-        {/* Home */}
+       
         <TouchableOpacity style={styles.navIcon} onPress={handleHomeNavigation}>
           <Image source={require('../assets/home_icon.png')} style={styles.icon} />
         </TouchableOpacity>
-        {/* Wishlist */}
+       
         <TouchableOpacity style={styles.navIcon} onPress={handleWishlistNavigation}>
           <Image source={require('../assets/wishlist_icon.png')} style={styles.icon} />
         </TouchableOpacity>
-        {/* Cart */}
+       
         <TouchableOpacity style={styles.navIcon} onPress={handleCartClick}>
           <Image source={require('../assets/cart_icon.png')} style={styles.icon} />
         </TouchableOpacity>
-        {/* User Profile */}
+      
         <TouchableOpacity style={styles.navIcon} onPress={handleUserProfileNavigation}>
           <Image source={require('../assets/user_icon.png')} style={styles.icon} />
         </TouchableOpacity>

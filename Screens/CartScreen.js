@@ -14,20 +14,16 @@ const CartScreen = () => {
         if (userId) {
             const database = getDatabase();
             const ordersRef = ref(database, `orders/${userId}`);
-
-            // Listen for changes to the user's orders
             const unsubscribe = onValue(ordersRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    // Convert the data object into an array
+                    
                     const orderList = Object.values(data);
                     setOrders(orderList);
                 } else {
                     setOrders([]);
                 }
             });
-
-            // Cleanup subscription on unmount
             return () => {
                 unsubscribe();
             };
@@ -35,7 +31,7 @@ const CartScreen = () => {
     }, [userId]);
 
 
-    // Render each order in a list
+    
     const renderOrderItem = ({ item }) => (
         <TouchableOpacity style={styles.orderItem}>
             {item.productImage && (<Image source={{ uri: item.productImage}} style={styles.productImage}/> )}
